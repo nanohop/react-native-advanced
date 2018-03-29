@@ -7,14 +7,23 @@ import {
   StatusBar,
   ActivityIndicator,
   Image,
-  Platform
+  Platform,
+  TouchableOpacity
 } from 'react-native';
 
-import { Button, Text as NBText, Segment } from 'native-base'
+import { 
+  Button, 
+  Text as NBText, 
+  Segment,
+  Icon
+} from 'native-base'
 
 import TodoItem from './TodoItem'
 import CheckImage from '../images/check.png'
 import { items } from '../lib/api'
+
+import TodoHeader from './TodoHeader'
+
 
 export default class ToDoList extends Component {
 
@@ -87,11 +96,8 @@ export default class ToDoList extends Component {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
-        <View style={styles.header}>
-          <Text style={styles.headerText}>
-            Todo List
-          </Text>
-        </View>
+        
+        <TodoHeader logout={this.props.screenProps.logout} />
 
         <View style={styles.contentWrapper}>
 
@@ -163,21 +169,6 @@ const styles = StyleSheet.create({
   segment: {
     flex: 1, 
     padding: 5
-  },
-  header: {
-    padding: 10,
-    paddingTop: 20,
-    alignSelf: 'stretch',
-    flexDirection: 'row',
-    backgroundColor: '#2288ee',
-    borderBottomWidth: 1,
-    borderColor: '#0066cc',
-    justifyContent: 'center',
-  },
-  headerText: {
-    fontSize: 20,
-    textAlign: 'center',
-    color: '#ffffff'
   },
   item: {
     padding: 10

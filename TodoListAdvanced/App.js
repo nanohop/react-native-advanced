@@ -4,7 +4,8 @@ import {
   Platform,
   StyleSheet,
   Text,
-  View
+  View,
+  AsyncStorage
 } from 'react-native';
 
 console.disableYellowBox = true;
@@ -45,9 +46,15 @@ export default class App extends Component<Props> {
     this.setState({ username })
   }
 
+  logout = () => {
+    AsyncStorage.setItem('@TodoListAdvanced:username', '').then(() => {
+      this.setState({ username: null })
+    })
+  }
+
   render() {
     if(this.state.username !== null) {
-      return <TabNav />
+      return <TabNav screenProps={{ logout: this.logout }} />
     } else {
       return <Login login={this.login} />
     }
