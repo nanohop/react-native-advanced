@@ -26,6 +26,14 @@ export default class TodoItem extends Component {
     })
   }
 
+  componentDidUpdate(prevProps) {
+    if(this.props.item.deleted && !prevProps.item.deleted) {
+      setTimeout(() => {
+        this.props.deleteTodoAPI(this.props.item.id)
+      }, 500)
+    }
+  }
+
   toggleTodo = () => {
     this.props.updateTodo(
       this.props.item.id,

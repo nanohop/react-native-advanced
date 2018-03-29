@@ -72,6 +72,20 @@ export default class ToDoList extends Component {
   }
 
   deleteTodo = (id) => {
+    const newItems = this.state.items.map(item => {
+      if(item.id === id) {
+        return {
+          ...item,
+          deleted: true
+        }
+      } else {
+        return item
+      }
+    })
+    this.setState({ items: newItems })
+  }
+
+  deleteTodoAPI = (id) => {
     items('DELETE', { id })
     .then(json => {
       this.setState({ items: json })
@@ -142,6 +156,7 @@ export default class ToDoList extends Component {
                 item={row.item} 
                 updateTodo={this.updateTodo}
                 deleteTodo={this.deleteTodo}
+                deleteTodoAPI={this.deleteTodoAPI}
               />
             }}
             keyExtractor={item => item.id.toString()}
