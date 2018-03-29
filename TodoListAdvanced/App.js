@@ -19,9 +19,6 @@ import Login from './src/screens/Login/Login'
 
 const TodoNav = StackNavigator({
   TodoList: { screen: ToDoList },
-  AddTodo: { screen: AddTodo }
-}, {
-  mode: 'modal'
 })
 
 const TabNav = TabNavigator({
@@ -33,6 +30,13 @@ const TabNav = TabNavigator({
     activeTintColor: '#0066cc'
   },
   ...TabNavigator.Presets.iOSBottomTabs
+})
+
+const RootNav = StackNavigator({
+  TabNav: { screen: TabNav },
+  AddTodo: { screen: AddTodo },
+}, {
+  mode: 'modal'
 })
 
 type Props = {};
@@ -54,7 +58,7 @@ export default class App extends Component<Props> {
 
   render() {
     if(this.state.username !== null) {
-      return <TabNav screenProps={{ logout: this.logout }} />
+      return <RootNav screenProps={{ logout: this.logout }} />
     } else {
       return <Login login={this.login} />
     }

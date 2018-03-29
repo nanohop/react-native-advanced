@@ -11,6 +11,10 @@ import { Form, Item, Input, Button, Text as NBText } from 'native-base'
 
 export default class AddTodo extends Component {
 
+  static navigationOptions = {
+    title: 'Add Todo'
+  }
+
   state = {
     task: ''
   }
