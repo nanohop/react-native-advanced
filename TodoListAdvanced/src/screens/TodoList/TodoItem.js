@@ -3,12 +3,28 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  LayoutAnimation
 } from 'react-native';
 
 import { Icon } from 'native-base'
 
 export default class TodoItem extends Component {
+
+  state = {
+    height: 40,
+    padding: 100
+  }
+
+  componentDidMount() {
+    requestAnimationFrame(() => {
+      LayoutAnimation.spring()
+      this.setState({
+        height: 60,
+        padding: 0
+      })
+    })
+  }
 
   toggleTodo = () => {
     this.props.updateTodo(
@@ -26,7 +42,14 @@ export default class TodoItem extends Component {
     return (
       <TouchableOpacity 
         onPress={this.toggleTodo}
-        style={styles.itemButton}
+        style={[
+            styles.itemButton,
+            {
+              height: this.state.height,
+              marginRight: this.state.padding,
+              marginLeft: this.state.padding
+            }
+          ]}
       >
         <Icon name={item.completed ? 'checkmark-circle' : 'radio-button-off'} />
         <Text style={[styles.item, {
