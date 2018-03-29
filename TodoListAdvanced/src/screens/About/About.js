@@ -6,7 +6,7 @@ import {
   StyleSheet
 } from 'react-native';
 
-import AboutImage from '../../images/star.png'
+import AboutImage from 'images/star.png'
 
 export default class About extends Component {
 

@@ -11,7 +11,7 @@ import {
   Icon
 } from 'native-base'
 
-import * as colors from '../../theme/colors'
+import * as colors from 'theme/colors'
 
 
 const TodoHeader = ({ logout }) => {
