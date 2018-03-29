@@ -3,8 +3,7 @@ import {
   Platform,
   StyleSheet,
   View,
-  Image,
-  Dimensions
+  Image
 } from 'react-native'
 
 import { 
@@ -16,6 +15,8 @@ import {
   Button,
   Text
 } from 'native-base'
+
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import LoginImage from '../images/todo_icon.png'
 
@@ -33,59 +34,63 @@ export default class Login extends Component {
 
   render() {
     return (
-      <Container>
-        <View 
-          style={styles.logoContainer}
-          onLayout={event => {
-            this.setState({
-              width: event.nativeEvent.layout.width
-            })
-          }}
-        >
-          <Image 
-            source={LoginImage} 
-            resizeMode="contain"
-            style={{
-              width: this.state.width / 2.0,
-              height: this.state.width / 2.0,
-              maxHeight: 200,
-              maxWidth: 200
+      <KeyboardAwareScrollView
+        style={{ flex: 1 }}
+      >
+        <Container>
+          <View 
+            style={styles.logoContainer}
+            onLayout={event => {
+              this.setState({
+                width: event.nativeEvent.layout.width
+              })
             }}
-          />
-        </View>
-
-        <View style={{ padding: 20 }} >
-          <Item style={{ marginRight: 5 }}>
-            <Input 
-              placeholder="Username" 
-              value={this.state.username}
-              onChangeText={text => {
-                this.setState({ username: text })
-              }}
-            />
-          </Item>
-          <Item style={{ marginRight: 5 }}>
-            <Input 
-              placeholder="Password" 
-              value={this.state.password}
-              secureTextEntry
-              onChangeText={text => {
-                this.setState({ password: text })
-              }}
-            />
-          </Item>
-
-          <Button 
-            block 
-            style={{ marginTop: 80 }}
-            onPress={this.login}
           >
-            <Text>Login</Text>
-          </Button>
+            <Image 
+              source={LoginImage} 
+              resizeMode="contain"
+              style={{
+                width: this.state.width / 2.0,
+                height: this.state.width / 2.0,
+                maxHeight: 200,
+                maxWidth: 200
+              }}
+            />
+          </View>
+
+          <View style={{ padding: 20 }} >
+            <Item style={{ marginRight: 5 }}>
+              <Input 
+                placeholder="Username" 
+                value={this.state.username}
+                onChangeText={text => {
+                  this.setState({ username: text })
+                }}
+              />
+            </Item>
+            <Item style={{ marginRight: 5 }}>
+              <Input 
+                placeholder="Password" 
+                value={this.state.password}
+                secureTextEntry
+                onChangeText={text => {
+                  this.setState({ password: text })
+                }}
+              />
+            </Item>
+
+            <Button 
+              block 
+              style={{ marginTop: 80 }}
+              onPress={this.login}
+            >
+              <Text>Login</Text>
+            </Button>
 
 
-        </View>
-      </Container>
+          </View>
+        </Container>
+      </KeyboardAwareScrollView>
     )
   }
 
