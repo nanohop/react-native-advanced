@@ -3,7 +3,8 @@ import {
   Platform,
   StyleSheet,
   View,
-  Image
+  Image,
+  AsyncStorage
 } from 'react-native'
 
 import { 
@@ -25,14 +26,37 @@ export default class Login extends Component {
   state = {
     username: '',
     password: '',
-    width: 0
+    width: 0,
+    usernameLoaded: false
+  }
+
+  componentDidMount() {
+    AsyncStorage.getItem(
+      '@TodoListAdvanced:username'
+    ).then(username => {
+      if(!username || username === "") {
+        this.setState({ usernameLoaded: true })
+      } else {
+        this.props.login(username)        
+      }
+    }).catch(e => {
+      this.setState({ usernameLoaded: true })
+    })
   }
 
   login = () => {
+    AsyncStorage.setItem(
+      '@TodoListAdvanced:username',
+      this.state.username
+    )
     this.props.login(this.state.username)
   }
 
   render() {
+    if(!this.state.usernameLoaded) {
+      return <View />
+    }
+
     return (
       <KeyboardAwareScrollView
         style={{ flex: 1 }}
