@@ -18,10 +18,10 @@ import {
   Icon
 } from 'native-base'
 
-import TodoItem from './TodoItem'
-import CheckImage from '../images/check.png'
-import { items } from '../lib/api'
+import CheckImage from '../../images/check.png'
+import { items } from '../../lib/api'
 
+import TodoItem from './TodoItem'
 import TodoHeader from './TodoHeader'
 
 

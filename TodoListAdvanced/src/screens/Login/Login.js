@@ -19,7 +19,7 @@ import {
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-import LoginImage from '../images/todo_icon.png'
+import LoginImage from '../../images/todo_icon.png'
 
 export default class Login extends Component {
 

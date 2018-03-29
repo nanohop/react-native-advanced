@@ -11,6 +11,8 @@ import {
   Icon
 } from 'native-base'
 
+import * as colors from '../../theme/colors'
+
 
 const TodoHeader = ({ logout }) => {
   return (
@@ -35,7 +37,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     alignSelf: 'stretch',
     flexDirection: 'row',
-    backgroundColor: '#2288ee',
+    backgroundColor: colors.primary,
     borderBottomWidth: 1,
     borderColor: '#0066cc',
     justifyContent: 'space-between',

@@ -12,10 +12,10 @@ console.disableYellowBox = true;
 
 import { TabNavigator, StackNavigator } from 'react-navigation'
 
-import ToDoList from './src/components/TodoList'
-import About from './src/components/About'
-import AddTodo from './src/components/AddTodo'
-import Login from './src/components/Login'
+import ToDoList from './src/screens/TodoList/TodoList'
+import About from './src/screens/About/About'
+import AddTodo from './src/screens/AddTodo/AddTodo'
+import Login from './src/screens/Login/Login'
 
 const TodoNav = StackNavigator({
   TodoList: { screen: ToDoList },
