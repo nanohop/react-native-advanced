@@ -22,6 +22,10 @@ import CheckImage from 'images/check.png'
 import { items } from 'lib/api'
 
 import TodoItem from './TodoItem'
+import fadeout from 'components/shared/FadeOut'
+  
+const FadeableTodoItem = fadeout(TodoItem)
+
 import TodoHeader from './TodoHeader'
 
 
@@ -152,11 +156,14 @@ export default class ToDoList extends Component {
             data={this.filteredItems()}
             style={styles.content}
             renderItem={row => {
-              return <TodoItem 
+              return <FadeableTodoItem 
                 item={row.item} 
                 updateTodo={this.updateTodo}
                 deleteTodo={this.deleteTodo}
-                deleteTodoAPI={this.deleteTodoAPI}
+                fade={row.item.deleted}
+                afterFade={() => {
+                  this.deleteTodoAPI(row.item.id)
+                }}
               />
             }}
             keyExtractor={item => item.id.toString()}
