@@ -7,14 +7,53 @@ import {
   StatusBar,
   ActivityIndicator,
   Image,
-  Platform
+  Platform,
+  TouchableOpacity,
+  ScrollView
 } from 'react-native';
 
-import { Button, Text as NBText, Segment } from 'native-base'
+import { 
+  Button, 
+  Text as NBText, 
+  Segment,
+  Icon
+} from 'native-base'
+
+import CheckImage from 'images/check.png'
+import { items } from 'lib/api'
 
 import TodoItem from './TodoItem'
-import CheckImage from '../images/check.png'
-import { items } from '../lib/api'
+import fadeout from 'components/shared/FadeOut'
+
+import BounceIn from 'components/shared/BounceIn'
+  
+const FadeableTodoItem = fadeout(TodoItem)
+
+import TodoHeader from './TodoHeader'
+
+const FilterBar = ({ filter, changeFilter, children }) => {
+  return (
+    <View style={styles.contentHeader}>
+      <Segment style={styles.segment}>
+        {
+          React.Children.map(children, (child, index) => {
+            const text = child.props.children
+            return (
+              <Button 
+                first={Platform.OS === 'ios' && index === 0}
+                last={Platform.OS === 'ios' && index === children.length - 1}
+                active={filter === text}
+                onPress={() => changeFilter(text)}
+              >
+                {child}
+              </Button>
+            )
+          })
+        }
+      </Segment>
+    </View>
+  )
+}
 
 export default class ToDoList extends Component {
 
@@ -31,10 +70,17 @@ export default class ToDoList extends Component {
  
   state = {
     items: null,
-    filter: 'All'
+    filter: 'All',
+    counter: 0
+  }
+
+  incCounter = () => {
+    this.setState({ counter: this.state.counter + 1 })
+    setTimeout(this.incCounter, 500)
   }
 
   componentDidMount() {
+    this.incCounter()
     items('GET')
     .then(items => {
       this.setState({ items })
@@ -63,6 +109,20 @@ export default class ToDoList extends Component {
   }
 
   deleteTodo = (id) => {
+    const newItems = this.state.items.map(item => {
+      if(item.id === id) {
+        return {
+          ...item,
+          deleted: true
+        }
+      } else {
+        return item
+      }
+    })
+    this.setState({ items: newItems })
+  }
+
+  deleteTodoAPI = (id) => {
     items('DELETE', { id })
     .then(json => {
       this.setState({ items: json })
@@ -80,6 +140,7 @@ export default class ToDoList extends Component {
         return i.completed
       })
     }
+
     return this.state.items
   }
 
@@ -87,38 +148,21 @@ export default class ToDoList extends Component {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
-        <View style={styles.header}>
-          <Text style={styles.headerText}>
-            Todo List
-          </Text>
-        </View>
+        
+        <TodoHeader logout={this.props.screenProps.logout} />
 
         <View style={styles.contentWrapper}>
 
-          <View style={styles.contentHeader}>
-            <Segment style={styles.segment}>
-              <Button 
-                first={Platform.OS === 'ios'}
-                active={this.state.filter === 'All'}
-                onPress={() => this.setState({ filter: 'All' })}
-              >
-                <NBText>All</NBText>
-              </Button>
-              <Button 
-                active={this.state.filter === 'Todo'}
-                onPress={() => this.setState({ filter: 'Todo' })}
-              >
-                <NBText>Todo</NBText>
-              </Button>
-              <Button 
-                last={Platform.OS === 'ios'}
-                active={this.state.filter === 'Complete'}
-                onPress={() => this.setState({ filter: 'Complete' })}
-              >
-                <NBText>Complete</NBText>
-              </Button>
-            </Segment>
-          </View>
+          <FilterBar 
+            filter={this.state.filter}
+            changeFilter={filter => {
+              this.setState({ filter })
+            }}
+          >
+            <NBText>All</NBText>
+            <NBText>Todo</NBText>
+            <NBText>Complete</NBText>
+          </FilterBar>
 
           {
             !this.state.items && <ActivityIndicator 
@@ -132,10 +176,20 @@ export default class ToDoList extends Component {
             data={this.filteredItems()}
             style={styles.content}
             renderItem={row => {
-              return <TodoItem 
-                item={row.item} 
-                updateTodo={this.updateTodo}
-                deleteTodo={this.deleteTodo}
+              return <BounceIn 
+                render={({ height, padding }) => {
+                  return <FadeableTodoItem 
+                    item={row.item} 
+                    height={height}
+                    padding={padding}
+                    updateTodo={this.updateTodo}
+                    deleteTodo={this.deleteTodo}
+                    fade={row.item.deleted}
+                    afterFade={() => {
+                      this.deleteTodoAPI(row.item.id)
+                    }}
+                  />
+                }}
               />
             }}
             keyExtractor={item => item.id.toString()}
@@ -163,21 +217,6 @@ const styles = StyleSheet.create({
   segment: {
     flex: 1, 
     padding: 5
-  },
-  header: {
-    padding: 10,
-    paddingTop: 20,
-    alignSelf: 'stretch',
-    flexDirection: 'row',
-    backgroundColor: '#2288ee',
-    borderBottomWidth: 1,
-    borderColor: '#0066cc',
-    justifyContent: 'center',
-  },
-  headerText: {
-    fontSize: 20,
-    textAlign: 'center',
-    color: '#ffffff'
   },
   item: {
     padding: 10
