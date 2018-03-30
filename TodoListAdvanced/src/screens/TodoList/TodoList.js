@@ -30,6 +30,29 @@ const FadeableTodoItem = fadeout(TodoItem)
 
 import TodoHeader from './TodoHeader'
 
+const FilterBar = ({ filter, changeFilter, children }) => {
+  return (
+    <View style={styles.contentHeader}>
+      <Segment style={styles.segment}>
+        {
+          React.Children.map(children, (child, index) => {
+            const text = child.props.children
+            return (
+              <Button 
+                first={Platform.OS === 'ios' && index === 0}
+                last={Platform.OS === 'ios' && index === children.length - 1}
+                active={filter === text}
+                onPress={() => changeFilter(text)}
+              >
+                {child}
+              </Button>
+            )
+          })
+        }
+      </Segment>
+    </View>
+  )
+}
 
 export default class ToDoList extends Component {
 
@@ -121,30 +144,16 @@ export default class ToDoList extends Component {
 
         <View style={styles.contentWrapper}>
 
-          <View style={styles.contentHeader}>
-            <Segment style={styles.segment}>
-              <Button 
-                first={Platform.OS === 'ios'}
-                active={this.state.filter === 'All'}
-                onPress={() => this.setState({ filter: 'All' })}
-              >
-                <NBText>All</NBText>
-              </Button>
-              <Button 
-                active={this.state.filter === 'Todo'}
-                onPress={() => this.setState({ filter: 'Todo' })}
-              >
-                <NBText>Todo</NBText>
-              </Button>
-              <Button 
-                last={Platform.OS === 'ios'}
-                active={this.state.filter === 'Complete'}
-                onPress={() => this.setState({ filter: 'Complete' })}
-              >
-                <NBText>Complete</NBText>
-              </Button>
-            </Segment>
-          </View>
+          <FilterBar 
+            filter={this.state.filter}
+            changeFilter={filter => {
+              this.setState({ filter })
+            }}
+          >
+            <NBText>All</NBText>
+            <NBText>Todo</NBText>
+            <NBText>Complete</NBText>
+          </FilterBar>
 
           {
             !this.state.items && <ActivityIndicator 
