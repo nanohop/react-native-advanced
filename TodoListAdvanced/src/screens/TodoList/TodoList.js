@@ -55,20 +55,6 @@ const FilterBar = ({ filter, changeFilter, children }) => {
   )
 }
 
-class PerfTest extends React.Component {
-  
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.counter % 4 === 0
-  }
-
-  render() {
-    console.warn("render")
-    return <View>
-      <Text>{this.props.counter}</Text>
-    </View>
-  }
-}
-
 export default class ToDoList extends Component {
 
   static navigationOptions = {
@@ -163,11 +149,6 @@ export default class ToDoList extends Component {
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
         
-        <PerfTest 
-          myProp="123" 
-          counter={this.state.counter}
-        />
-
         <TodoHeader logout={this.props.screenProps.logout} />
 
         <View style={styles.contentWrapper}>
