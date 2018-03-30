@@ -1,3 +1,19 @@
+
+
+
+
+//// Set this to true to force bad performance
+//// with 1,000 todo items in a scroll view
+
+FORCE_BAD_PERFORMANCE = false
+
+////
+////
+
+
+
+
+
 import React, { Component } from 'react';
 import {
   StyleSheet,
@@ -8,7 +24,8 @@ import {
   ActivityIndicator,
   Image,
   Platform,
-  TouchableOpacity
+  TouchableOpacity,
+  ScrollView
 } from 'react-native';
 
 import { 
@@ -132,7 +149,23 @@ export default class ToDoList extends Component {
         return i.completed
       })
     }
-    return this.state.items
+
+    if(FORCE_BAD_PERFORMANCE) {
+      if(!this.state.items) {
+        return []
+      }
+
+      let newItems = []
+      for(let i = 0; i < 1000; i++) {
+        newItems.push({
+          ...this.state.items[0],
+          id: i
+        })
+      }
+      return newItems
+    } else {
+      return this.state.items
+    }
   }
 
   render() {
@@ -163,28 +196,57 @@ export default class ToDoList extends Component {
             />
           }
 
-          <FlatList 
-            data={this.filteredItems()}
-            style={styles.content}
-            renderItem={row => {
-              return <BounceIn 
-                render={({ height, padding }) => {
-                  return <FadeableTodoItem 
-                    item={row.item} 
-                    height={height}
-                    padding={padding}
-                    updateTodo={this.updateTodo}
-                    deleteTodo={this.deleteTodo}
-                    fade={row.item.deleted}
-                    afterFade={() => {
-                      this.deleteTodoAPI(row.item.id)
-                    }}
+          {
+            FORCE_BAD_PERFORMANCE && <ScrollView style={styles.content}>
+              {
+                this.filteredItems() &&
+                this.filteredItems().map((item, i) => {
+                  return <BounceIn
+                    key={i}
+                    render={({ height, padding }) => {
+                      return <FadeableTodoItem 
+                        item={item} 
+                        height={height}
+                        padding={padding}
+                        updateTodo={this.updateTodo}
+                        deleteTodo={this.deleteTodo}
+                        fade={item.deleted}
+                        afterFade={() => {
+                          this.deleteTodoAPI(item.id)
+                        }}
+                      />
+                    }
+                    }
                   />
-                }}
-              />
-            }}
-            keyExtractor={item => item.id.toString()}
-          />
+                })
+              }
+            </ScrollView>
+          }
+
+          {
+            !FORCE_BAD_PERFORMANCE && <FlatList 
+              data={this.filteredItems()}
+              style={styles.content}
+              renderItem={row => {
+                return <BounceIn 
+                  render={({ height, padding }) => {
+                    return <FadeableTodoItem 
+                      item={row.item} 
+                      height={height}
+                      padding={padding}
+                      updateTodo={this.updateTodo}
+                      deleteTodo={this.deleteTodo}
+                      fade={row.item.deleted}
+                      afterFade={() => {
+                        this.deleteTodoAPI(row.item.id)
+                      }}
+                    />
+                  }}
+                />
+              }}
+              keyExtractor={item => item.id.toString()}
+            />
+          }
 
           <View style={styles.contentFooter}>
             <Button onPress={this.addItem}>
