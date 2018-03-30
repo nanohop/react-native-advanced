@@ -23,6 +23,8 @@ import { items } from 'lib/api'
 
 import TodoItem from './TodoItem'
 import fadeout from 'components/shared/FadeOut'
+
+import BounceIn from 'components/shared/BounceIn'
   
 const FadeableTodoItem = fadeout(TodoItem)
 
@@ -156,13 +158,19 @@ export default class ToDoList extends Component {
             data={this.filteredItems()}
             style={styles.content}
             renderItem={row => {
-              return <FadeableTodoItem 
-                item={row.item} 
-                updateTodo={this.updateTodo}
-                deleteTodo={this.deleteTodo}
-                fade={row.item.deleted}
-                afterFade={() => {
-                  this.deleteTodoAPI(row.item.id)
+              return <BounceIn 
+                render={({ height, padding }) => {
+                  return <FadeableTodoItem 
+                    item={row.item} 
+                    height={height}
+                    padding={padding}
+                    updateTodo={this.updateTodo}
+                    deleteTodo={this.deleteTodo}
+                    fade={row.item.deleted}
+                    afterFade={() => {
+                      this.deleteTodoAPI(row.item.id)
+                    }}
+                  />
                 }}
               />
             }}

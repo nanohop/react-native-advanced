@@ -10,63 +10,44 @@ import {
 
 import { Icon } from 'native-base'
 
-export default class TodoItem extends Component {
-
-  state = {
-    height: 40,
-    padding: 100
-  }
-
-  componentDidMount() {
-
-    requestAnimationFrame(() => {
-      LayoutAnimation.spring()
-      this.setState({
-        height: 60,
-        padding: 0
-      })
-    })
-  }
-
-  toggleTodo = () => {
-    this.props.updateTodo(
-      this.props.item.id,
-      !this.props.item.completed
+export default (props) => {
+  
+  const toggleTodo = () => {
+    props.updateTodo(
+      props.item.id,
+      !props.item.completed
     )
   }
 
-  deleteTodo = () => {
-    this.props.deleteTodo(this.props.item.id)
+  const deleteTodo = () => {
+    props.deleteTodo(props.item.id)
   }
-
-  render() {
-
-    const item = this.props.item
-    return (
-      <TouchableOpacity 
-        onPress={this.toggleTodo}
-        style={[
-            styles.itemButton,
-            {
-              height: this.state.height,
-              marginRight: this.state.padding,
-              marginLeft: this.state.padding
-            }
-          ]}
-      >
-        <Icon name={item.completed ? 'checkmark-circle' : 'radio-button-off'} />
-        <Text style={[styles.item, {
-          opacity: (item.completed ? 0.5 : 1.0),
-          textDecorationLine: (item.completed ? 'line-through' : 'none')
-        }]}>
-          {item.task}
-        </Text>
-        <TouchableOpacity onPress={this.deleteTodo}>
-          <Icon name="trash" style={{ color: 'red', paddingRight: 10 }} />
-        </TouchableOpacity>
+  const item = props.item
+  
+  return (
+    <TouchableOpacity 
+      onPress={toggleTodo}
+      style={[
+          styles.itemButton,
+          {
+            height: props.height,
+            marginRight: props.padding,
+            marginLeft: props.padding
+          }
+        ]}
+    >
+      <Icon name={item.completed ? 'checkmark-circle' : 'radio-button-off'} />
+      <Text style={[styles.item, {
+        opacity: (item.completed ? 0.5 : 1.0),
+        textDecorationLine: (item.completed ? 'line-through' : 'none')
+      }]}>
+        {item.task}
+      </Text>
+      <TouchableOpacity onPress={deleteTodo}>
+        <Icon name="trash" style={{ color: 'red', paddingRight: 10 }} />
       </TouchableOpacity>
-    )
-  }
+    </TouchableOpacity>
+  )
 
 }
 
