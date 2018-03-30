@@ -1,19 +1,3 @@
-
-
-
-
-//// Set this to true to force bad performance
-//// with 1,000 todo items in a scroll view
-
-FORCE_BAD_PERFORMANCE = false
-
-////
-////
-
-
-
-
-
 import React, { Component } from 'react';
 import {
   StyleSheet,
@@ -71,6 +55,13 @@ const FilterBar = ({ filter, changeFilter, children }) => {
   )
 }
 
+class PerfTest extends React.PureComponent {
+  render() {
+    console.warn("render")
+    return <View />
+  }
+}
+
 export default class ToDoList extends Component {
 
   static navigationOptions = {
@@ -86,10 +77,17 @@ export default class ToDoList extends Component {
  
   state = {
     items: null,
-    filter: 'All'
+    filter: 'All',
+    counter: 0
+  }
+
+  incCounter = () => {
+    this.setState({ counter: this.state.counter + 1 })
+    setTimeout(this.incCounter, 500)
   }
 
   componentDidMount() {
+    this.incCounter()
     items('GET')
     .then(items => {
       this.setState({ items })
@@ -150,22 +148,7 @@ export default class ToDoList extends Component {
       })
     }
 
-    if(FORCE_BAD_PERFORMANCE) {
-      if(!this.state.items) {
-        return []
-      }
-
-      let newItems = []
-      for(let i = 0; i < 1000; i++) {
-        newItems.push({
-          ...this.state.items[0],
-          id: i
-        })
-      }
-      return newItems
-    } else {
-      return this.state.items
-    }
+    return this.state.items
   }
 
   render() {
@@ -173,6 +156,8 @@ export default class ToDoList extends Component {
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
         
+        <PerfTest myProp="123" />
+
         <TodoHeader logout={this.props.screenProps.logout} />
 
         <View style={styles.contentWrapper}>
@@ -196,57 +181,28 @@ export default class ToDoList extends Component {
             />
           }
 
-          {
-            FORCE_BAD_PERFORMANCE && <ScrollView style={styles.content}>
-              {
-                this.filteredItems() &&
-                this.filteredItems().map((item, i) => {
-                  return <BounceIn
-                    key={i}
-                    render={({ height, padding }) => {
-                      return <FadeableTodoItem 
-                        item={item} 
-                        height={height}
-                        padding={padding}
-                        updateTodo={this.updateTodo}
-                        deleteTodo={this.deleteTodo}
-                        fade={item.deleted}
-                        afterFade={() => {
-                          this.deleteTodoAPI(item.id)
-                        }}
-                      />
-                    }
-                    }
+          <FlatList 
+            data={this.filteredItems()}
+            style={styles.content}
+            renderItem={row => {
+              return <BounceIn 
+                render={({ height, padding }) => {
+                  return <FadeableTodoItem 
+                    item={row.item} 
+                    height={height}
+                    padding={padding}
+                    updateTodo={this.updateTodo}
+                    deleteTodo={this.deleteTodo}
+                    fade={row.item.deleted}
+                    afterFade={() => {
+                      this.deleteTodoAPI(row.item.id)
+                    }}
                   />
-                })
-              }
-            </ScrollView>
-          }
-
-          {
-            !FORCE_BAD_PERFORMANCE && <FlatList 
-              data={this.filteredItems()}
-              style={styles.content}
-              renderItem={row => {
-                return <BounceIn 
-                  render={({ height, padding }) => {
-                    return <FadeableTodoItem 
-                      item={row.item} 
-                      height={height}
-                      padding={padding}
-                      updateTodo={this.updateTodo}
-                      deleteTodo={this.deleteTodo}
-                      fade={row.item.deleted}
-                      afterFade={() => {
-                        this.deleteTodoAPI(row.item.id)
-                      }}
-                    />
-                  }}
-                />
-              }}
-              keyExtractor={item => item.id.toString()}
-            />
-          }
+                }}
+              />
+            }}
+            keyExtractor={item => item.id.toString()}
+          />
 
           <View style={styles.contentFooter}>
             <Button onPress={this.addItem}>
